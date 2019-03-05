@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
@@ -8,6 +9,7 @@ const passport = require('passport')
 // Load Routes
 const auth = require('./routes/auth')
 const index = require('./routes/index')
+const stories = require('./routes/stories')
 
 //Load User Model
 require('./models/User')
@@ -23,7 +25,7 @@ const app = express();
 
 // Handlebars Middleware
 app.engine('handlebars', exphbs({
-     defaultLayout: 'main'
+    defaultLayout: 'main'
 }))
 app.set('view engine', 'handlebars')
 
@@ -53,9 +55,13 @@ app.use((req, res, next) => {
     next();
 })
 
+// static folder
+app.use(express.static(path.join(__dirname,'public')))
+
 // Use Routes
 app.use('/', index);
 app.use('/auth', auth);
+app.use('/stories', stories);
 
 
 app.listen(port, () => {
