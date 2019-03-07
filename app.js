@@ -3,6 +3,7 @@ const path = require('path')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 const session = require('express-session')
 const passport = require('passport')
 
@@ -11,8 +12,10 @@ const auth = require('./routes/auth')
 const index = require('./routes/index')
 const stories = require('./routes/stories')
 
-//Load User Model
+//Load Models
 require('./models/User')
+
+require('./models/Story')
 
 // Passport Config
 require('./config/passport')(passport)
@@ -39,6 +42,13 @@ mongoose.connect(keys.mongoURI, {
 }).then(() => console.log("Mongo Db connected")).catch(err => console.log(err))
 
 
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
+app.use(bodyParser.json())
+
+
+// Cookie Parser
 app.use(cookieParser());
 app.use(session({
     secret: 'secret',
@@ -56,7 +66,7 @@ app.use((req, res, next) => {
 })
 
 // static folder
-app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Use Routes
 app.use('/', index);
